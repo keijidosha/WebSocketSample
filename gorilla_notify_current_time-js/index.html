@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>WebSocket</title>
+    <script>
+        var uri = 'ws://' + location.host + '/hoge/';
+        var ws = null;
+        function init() {
+            open();
+        }
+
+        function open() {
+            if(ws == null) {
+                ws = new WebSocket(uri);
+                ws.onopen = onOpen;
+                ws.onmessage = onMessage;
+                ws.onerror = onError;
+                ws.onclose = onClose;
+            }
+        }
+
+        function onOpen(event) {
+            document.getElementById('msg').innerHTML = 'connected';
+        }
+
+        function onMessage(event) {
+            if(event && event.data) {
+                document.getElementById('wslist').innerHTML = event.data;
+            }
+        }
+
+        function onError(event) {
+            document.getElementById('msg').innerHTML = 'Error: ' + event;
+        }
+
+        function onClose(event) {
+            document.getElementById('msg').innerHTML = 'disconnected(' + event.code + '), retry after 3 seconds';
+            ws = null;
+            setTimeout("open()", 3000);
+        }
+
+        init();
+    </script>
+</head>
+<body>
+<p id="wslist"></p>
+<p id="msg"></p>
+</body>
+</html>
